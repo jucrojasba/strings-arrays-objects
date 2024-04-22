@@ -70,7 +70,7 @@ function deleteEvent() {
     }
 }
 
-function main() {
+function menu() {
     let option;
 
     do {
@@ -109,4 +109,4 @@ function main() {
     } while (option !== '6');
 }
 
-main();
+menu();
