@@ -1,6 +1,6 @@
 /* Section 1 - Reto 1 */
 let userName, firstName, lastname, email, user, counter;
-const validateAlphabet = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ-\s]+$/g;
+const validateAlphabet = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ-\s]+$/;
 const dataBase = {};
 
 function assignEmail(userName) {
@@ -23,12 +23,7 @@ function menu() {
     if (addUser) {
       while (true) {
         userName = prompt("Type your full name");
-        if (validateAlphabet.test(userName) && userName.trim().length != 0) {
-          alert(
-            `${validateAlphabet.test(userName)} y ${
-              userName.trim().length != 0
-            }`
-          );
+        if (validateAlphabet.test(userName) && userName.trim().length != 0 && userName) {
           assignEmail(userName);
           console.log(
             `Felicidades tu nombre de usuario es ${user} y tu email es ${email}`
