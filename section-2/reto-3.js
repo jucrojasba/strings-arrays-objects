@@ -300,19 +300,107 @@ function buyProduct(){
   }
 }
 function totalInventory(){
-  if (products.length != 0) {
-    let totalInventory = products.reduce((previous, current) => {
-      (current.amount * current.price)+previous;
-    })
+  if (products.length != 0) { 
+    let totalInventory = 0;
+    for (let index = 0; index <products.length; index++) {
+      totalInventory += parseFloat(products[index].price)*parseFloat(products[index].amount);
+      
+    } 
+    function showPrice(value){
+      valueFormatted=`${value}`;
+      value > 999? valueFormatted = `${valueFormatted.slice(0,-3)}.${valueFormatted.slice(-3)}`: valueFormatted;
+      value>999999? valueFormatted=`${valueFormatted.slice(0,-7)}'${valueFormatted.slice(-7)}` : valueFormatted;
+      value>999999999? valueFormatted=`${valueFormatted.slice(0,-11)}.${valueFormatted.slice(-11)}` : valueFormatted;
+      value>999999999999? valueFormatted=`${valueFormatted.slice(0,-15)}'${valueFormatted.slice(-15)}` : valueFormatted;
+      return valueFormatted;
+    }
+    console.log(`El valor total del inventario es $${showPrice(totalInventory)}`);
+    alert(`El valor total del inventario es $${showPrice(totalInventory)}`)
   } else {
     alert(`No existen productos agregados en nuestra base de datos`)
   }
+  menu();
+}
+function sortProducts(){
+  if(products.length != 0){
+    let sortPrice, sortAmount;
+    flag = true;
+    while(flag){
+      let decision = prompt("¿Como deseas ordenar tus productos? \n\n1. Por precio (ascendente)\n2. Por precio (descendente)\n3. Por cantidad (ascendente)\n4. Por cantidad (descendente)\n\nEscribe 1, 2, 3 o 4");
+    switch (decision) {
+      case "1":
+        sortPrice = products.sort((a,b)=>a.price-b.price);
+        showProductsConsole(sortPrice);
+        showProductsAlert(sortPrice);
+        flag = false;
+        break;
+      case "2":
+        sortPrice = products.sort((a,b)=>b.price-a.price);
+        showProductsConsole(sortPrice);
+        showProductsAlert(sortPrice);
+        flag = false;
+        break;
+      case "3":
+        sortAmount = products.sort((a,b)=>a.amount-b.amount);
+        showProductsConsole(sortAmount);
+        showProductsAlert(sortAmount);
+        flag = false;
+        break;
+      case "4":
+        sortAmount = products.sort((a,b)=>b.amount-a.amount);
+        showProductsConsole(sortAmount);
+        showProductsAlert(sortAmount);
+        flag = false;
+        break;
+      default:
+        alert(`Opción inválida, porfavor ingresa una opción válida`)
+        break;
+    }
+    }
+  }else{
+    alert(`No existen productos agregados en nuestra base de datos para ordenar`);
+  }
+  products.sort((a,b)=>a.id-b.id);
+  menu();
+}
+function badWords(){
+if (products.length!=0) {
+  let adminBadWords = ['palabra1', 'palabra2', 'palabra3', 'palabra4', 'palabra5'];
+  let blacklistedProducts =[], descriptionProduct;
+  if (products.some(e=>{
+    descriptionProduct = e.description.trim().toLowerCase().split(' ');
+    return descriptionProduct.some(word=>adminBadWords.includes(word));
+  })) {
+    blacklistedProducts = products.filter(e=>{
+      descriptionProduct = e.description.trim().toLowerCase().split(' ');
+      return descriptionProduct.some(word=>adminBadWords.includes(word));
+    });
+    alert(`Encontramos ${blacklistedProducts.length} producto(s) con malas palabras. \n\nPresiona aceptar para ver los productos disponibles con malas palabras en su decripción`)
+    showProductsConsole(blacklistedProducts);
+    showProductsAlert(blacklistedProducts);
+  } else {
+    alert(`No existen productos con malas palabras en sus descripciones`)
+  }
+} else {
+  alert(`No existen productos agregados en nuestra base de datos`)
+}
+menu();
+}
+function generalReport(){
+  if(products.length!=0){
+    do {
+      let limitPrice = prompt(`Ingresa el precio que deseas analizar`)
+    } while (!validateNumber(limitPrice));
+  }else{
+  alert(`No existen productos agregados en nuestra base de datos`)
+  }
+  menu();
 }
 function menu() {
   flag = true;
   while (flag) {
     let decision = prompt(
-      "1. Crear producto\n2. Duplicar producto\n3. Busqueda y visualizaciòn de productos \n4. Actualizar la descripciòn de un producto \n5. Eliminar un producto \n6. Verificar existencias de un producto \n7. Vender un producto \n8. Comprar productos \n9. Calcular el valor total del Inventario\n\nElije una opción, escribe: 1,2,3,4,5,6 o "
+      "1. Crear producto\n2. Duplicar producto\n3. Busqueda y visualizaciòn de productos \n4. Actualizar la descripciòn de un producto \n5. Eliminar un producto \n6. Verificar existencias de un producto \n7. Vender un producto \n8. Comprar productos \n9. Calcular el valor total del Inventario \n10. Ordenar productos \n11. Identificar malas palabras en la descripción de productos\n\nElije una opción, escribe: 1,2,3,4,5,6,7,8,9, 10, 11, 12 o 13"
     );
     switch (decision) {
       case "1":
@@ -343,6 +431,12 @@ function menu() {
         totalInventory();
         break;
       case "10":
+        sortProducts();
+        break;
+      case "11":
+        badWords();
+        break;
+      case "12":
         alert("¡Hasta pronto!");
         flag = false;
         break;
