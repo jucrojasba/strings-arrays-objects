@@ -2,7 +2,7 @@
 let products = [],
   id = 0,
   flag = true,
-  product;
+  product, blacklistedProducts =[], descriptionProduct, adminBadWords = ['palabra1', 'palabra2', 'palabra3', 'palabra4', 'palabra5'];
 function validateAlphabetNumeric(validator) {
   const validateAlphabetNumeric =
     /^[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ][a-zA-ZñÑáéíóúüÁÉÍÓÚÜ\s0-9]*$/;
@@ -22,6 +22,14 @@ function validateNumber(validator) {
     alert(`Opciòn invàlida, porfavor ingresa un valor correcto`);
     return false;
   }
+}
+function showPrice(value){
+  let valueFormatted=`${value}`;
+  value > 999? valueFormatted = `${valueFormatted.slice(0,-3)}.${valueFormatted.slice(-3)}`: valueFormatted;
+  value>999999? valueFormatted=`${valueFormatted.slice(0,-7)}'${valueFormatted.slice(-7)}` : valueFormatted;
+  value>999999999? valueFormatted=`${valueFormatted.slice(0,-11)}.${valueFormatted.slice(-11)}` : valueFormatted;
+  value>999999999999? valueFormatted=`${valueFormatted.slice(0,-15)}'${valueFormatted.slice(-15)}` : valueFormatted;
+  return valueFormatted;
 }
 function createProducts() {
   let name, price, amount, description, product;
@@ -304,16 +312,7 @@ function totalInventory(){
     let totalInventory = 0;
     for (let index = 0; index <products.length; index++) {
       totalInventory += parseFloat(products[index].price)*parseFloat(products[index].amount);
-      
     } 
-    function showPrice(value){
-      valueFormatted=`${value}`;
-      value > 999? valueFormatted = `${valueFormatted.slice(0,-3)}.${valueFormatted.slice(-3)}`: valueFormatted;
-      value>999999? valueFormatted=`${valueFormatted.slice(0,-7)}'${valueFormatted.slice(-7)}` : valueFormatted;
-      value>999999999? valueFormatted=`${valueFormatted.slice(0,-11)}.${valueFormatted.slice(-11)}` : valueFormatted;
-      value>999999999999? valueFormatted=`${valueFormatted.slice(0,-15)}'${valueFormatted.slice(-15)}` : valueFormatted;
-      return valueFormatted;
-    }
     console.log(`El valor total del inventario es $${showPrice(totalInventory)}`);
     alert(`El valor total del inventario es $${showPrice(totalInventory)}`)
   } else {
@@ -365,8 +364,6 @@ function sortProducts(){
 }
 function badWords(){
 if (products.length!=0) {
-  let adminBadWords = ['palabra1', 'palabra2', 'palabra3', 'palabra4', 'palabra5'];
-  let blacklistedProducts =[], descriptionProduct;
   if (products.some(e=>{
     descriptionProduct = e.description.trim().toLowerCase().split(' ');
     return descriptionProduct.some(word=>adminBadWords.includes(word));
@@ -388,9 +385,26 @@ menu();
 }
 function generalReport(){
   if(products.length!=0){
+    let totalAmount =0,totalInventories = 0, limitAmount, limitPrice;
     do {
-      let limitPrice = prompt(`Ingresa el precio que deseas analizar`)
+      limitPrice = prompt(`Ingresa el precio que deseas analizar`)
     } while (!validateNumber(limitPrice));
+    do {
+      limitAmount = prompt("Ingresa la cantidad que deseas analizar")
+    } while (!validateNumber(limitAmount));
+    limitPrice = parseFloat(limitPrice);
+    limitAmount = parseFloat(limitAmount);
+    blacklistedProducts = products.filter(e=>{
+      descriptionProduct = e.description.trim().toLowerCase().split(' ');
+      return descriptionProduct.some(word=>adminBadWords.includes(word));
+    });
+    products.forEach(e=>totalAmount+=e.amount);
+    products.forEach(e=>totalInventories+=(e.price*e.amount));
+    alert(`-----Reporte General de Productos-----\n\n-La cantidad de productos en el inventario es: ${totalAmount} unidad(es)\n-El valor total del inventario es: $${showPrice(totalInventories)}\n-La cantidad de productos por encima de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price > limitPrice).length} producto(s)\n-La cantidad de productos por debajo de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price <= limitPrice).length} producto(s)\n-La cantidad de productos con existencias mayores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount > limitAmount).length} producto(s)\n-La cantidad de productos con existencias menores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount <= limitAmount).length} producto(s)\nLa cantidad de productos con posibles malas palabras en su descripción es: ${blacklistedProducts.length} producto(s)`);
+    console.log(`-----Reporte General de Productos-----\n\n-La cantidad de productos en el inventario es: ${totalAmount} unidad(es)\n-El valor total del inventario es: $${showPrice(totalInventories)}\n-La cantidad de productos por encima de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price > limitPrice).length} producto(s)\n-La cantidad de productos por debajo de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price <= limitPrice).length} producto(s)\n-La cantidad de productos con existencias mayores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount > limitAmount).length} producto(s)\n-La cantidad de productos con existencias menores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount <= limitAmount).length} producto(s)\nLa cantidad de productos con posibles malas palabras en su descripción son: ${blacklistedProducts.length} producto(s)`);
+    
+    console.log(`-----Reporte General de Productos-----\n\n-La cantidad de productos en el inventario es: ${totalAmount} unidad(es)\n-El valor total del inventario es: $${showPrice(totalInventories)}\n-La cantidad de productos por encima de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price > limitPrice).length} producto(s)\n-La cantidad de productos por debajo de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price <= limitPrice).length} producto(s)\n-La cantidad de productos con existencias mayores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount > limitAmount).length} producto(s)\n-La cantidad de productos con existencias menores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount <= limitAmount).length} producto(s)\nLa cantidad de productos con posibles malas palabras en su descripción es: ${blacklistedProducts.length} producto(s)`);
+    console.log(`-----Reporte General de Productos-----\n\n-La cantidad de productos en el inventario es: ${totalAmount} unidad(es)\n-El valor total del inventario es: $${showPrice(totalInventories)}\n-La cantidad de productos por encima de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price > limitPrice).length} producto(s)\n-La cantidad de productos por debajo de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price <= limitPrice).length} producto(s)\n-La cantidad de productos con existencias mayores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount > limitAmount).length} producto(s)\n-La cantidad de productos con existencias menores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount <= limitAmount).length} producto(s)\nLa cantidad de productos con posibles malas palabras en su descripción son: ${blacklistedProducts.length} producto(s)`);
   }else{
   alert(`No existen productos agregados en nuestra base de datos`)
   }
@@ -400,7 +414,7 @@ function menu() {
   flag = true;
   while (flag) {
     let decision = prompt(
-      "1. Crear producto\n2. Duplicar producto\n3. Busqueda y visualizaciòn de productos \n4. Actualizar la descripciòn de un producto \n5. Eliminar un producto \n6. Verificar existencias de un producto \n7. Vender un producto \n8. Comprar productos \n9. Calcular el valor total del Inventario \n10. Ordenar productos \n11. Identificar malas palabras en la descripción de productos\n\nElije una opción, escribe: 1,2,3,4,5,6,7,8,9, 10, 11, 12 o 13"
+      "1. Crear producto\n2. Duplicar producto\n3. Busqueda y visualizaciòn de productos \n4. Actualizar la descripciòn de un producto \n5. Eliminar un producto \n6. Verificar existencias de un producto \n7. Vender un producto \n8. Comprar productos \n9. Calcular el valor total del Inventario \n10. Ordenar productos \n11. Identificar malas palabras en la descripción de productos\n12. Reporte general de productos \n13. Salir\n\nElije una opción, escribe: 1,2,3,4,5,6,7,8,9, 10, 11, 12 o 13"
     );
     switch (decision) {
       case "1":
@@ -437,6 +451,9 @@ function menu() {
         badWords();
         break;
       case "12":
+        generalReport();
+        break;
+      case "13":
         alert("¡Hasta pronto!");
         flag = false;
         break;
