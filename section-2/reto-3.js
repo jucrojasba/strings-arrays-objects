@@ -299,12 +299,20 @@ function buyProduct(){
     menu();
   }
 }
-
+function totalInventory(){
+  if (products.length != 0) {
+    let totalInventory = products.reduce((previous, current) => {
+      (current.amount * current.price)+previous;
+    })
+  } else {
+    alert(`No existen productos agregados en nuestra base de datos`)
+  }
+}
 function menu() {
   flag = true;
   while (flag) {
     let decision = prompt(
-      "1. Crear producto\n2. Duplicar producto\n3. Busqueda y visualizaciòn de productos \n4. Actualizar la descripciòn de un producto \n5. Eliminar un producto \n6. Verificar existencias de un producto \n7. Vender un producto \n8. Comprar productos \n\nElije una opción, escribe: 1,2,3,4,5,6 o "
+      "1. Crear producto\n2. Duplicar producto\n3. Busqueda y visualizaciòn de productos \n4. Actualizar la descripciòn de un producto \n5. Eliminar un producto \n6. Verificar existencias de un producto \n7. Vender un producto \n8. Comprar productos \n9. Calcular el valor total del Inventario\n\nElije una opción, escribe: 1,2,3,4,5,6 o "
     );
     switch (decision) {
       case "1":
@@ -332,6 +340,9 @@ function menu() {
         buyProduct();
         break;
       case "9":
+        totalInventory();
+        break;
+      case "10":
         alert("¡Hasta pronto!");
         flag = false;
         break;
