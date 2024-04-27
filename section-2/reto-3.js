@@ -172,6 +172,31 @@ function searchProducts() {
     menu();
   }
 }
+function updateDescription(){
+  if(products.length != 0) {
+    showProductsAlert(products);
+    do {
+      product = prompt("Ingresa el id del producto que deseas modificar")
+    } while (!validateNumber(product));
+    product = parseFloat(product);
+    if (products.some(e=>e.id == product)) {
+      product = products.find(e=> e.id == product);
+      let newDescription='';
+      do {
+        newDescription = prompt(`Ingresa una nueva descripciòn para el producto: ${product.name}, con id: ${product.id} y descripciòn: ${product.description}`);
+      } while (!validateAlphabetNumeric(newDescription));
+      console.log(newDescription)
+      product.description = `${newDescription}`;
+      alert(`La nueva decripciòn:\n\n${newDescription}\n\nHa sido agregada con èxito!`)
+    } else {
+      alert(`El id: ${product} no se encuentra en nuestra base de datos`)
+    }
+
+  } else {
+    alert(`Nuestra base de datos no tiene productos agregados`);
+    menu();
+  }
+}
 function deleteProduct() {
   products.length != 0
     ? showProductsConsole(products)
@@ -224,12 +249,62 @@ function existenceProduct() {
     menu();
   }
 }
+function sellProduct(){
+  if(products.length !=0){
+    do {
+      product=prompt("Ingresa el id del producto que deseas vender")
+    } while (!validateNumber(product));
+    product = parseFloat(product);
+    if (products.some(e=>e.id == product)) {
+      product = products.find(e=>e.id == product);
+      let amountSell = 0;
+      do {
+        amountSell = prompt(`Ingresa la cantidad de unidades de ${product.name} con id(${product.id}) que deseas vender`)
+      } while (!validateNumber(amountSell));
+      amountSell = parseFloat(amountSell);
+      if (product.amount-amountSell>=0) {
+        product.amount-=amountSell;
+        alert(`Realizaste la venta de ${amountSell} unidad(es) de ${product.name} \n\nTe quedan: ${product.amount} unidad(es) del producto ${product.name}`)
+      } else {
+        alert(`El producto: ${product.name} con id(${product.id}) tiene ${product.amount} existencia(s) en nuestro inventario. No es posible realizar la venta!`)
+      }
+    } else {
+      alert(`El id: ${product} no se encuentra en nuestra base de datos`)
+    }
+  }else{
+    alert(`No existen productos agregados en nuestra base de datos`);
+    menu();
+  }
+}
+function buyProduct(){
+  if(products.length !=0){
+    do {
+      product=prompt("Ingresa el id del producto que deseas comprar")
+    } while (!validateNumber(product));
+    product = parseFloat(product);
+    if (products.some(e=>e.id == product)) {
+      product = products.find(e=>e.id == product);
+      let amountBuy = 0;
+      do {
+        amountBuy = prompt(`Ingresa la cantidad de unidades de ${product.name} con id(${product.id}) que deseas comprar`)
+      } while (!validateNumber(amountBuy));
+      amountBuy = parseFloat(amountBuy);
+      product.amount+=amountBuy;
+      alert(`Realizaste la venta de ${amountBuy} unidad(es) de ${product.name} \n\nTe quedan: ${product.amount} unidad(es) del producto ${product.name}`)
+    } else {
+      alert(`El id: ${product} no se encuentra en nuestra base de datos`)
+    }
+  }else{
+    alert(`No existen productos agregados en nuestra base de datos`);
+    menu();
+  }
+}
 
 function menu() {
   flag = true;
   while (flag) {
     let decision = prompt(
-      "1. Crear producto\n2. Duplicar producto\n3. Busqueda y visualizaciòn de productos \n4. Eliminar un producto \n5. Verificar existencias de un producto\n\nElije una opción, escribe: 1,2,3,4,5 o "
+      "1. Crear producto\n2. Duplicar producto\n3. Busqueda y visualizaciòn de productos \n4. Actualizar la descripciòn de un producto \n5. Eliminar un producto \n6. Verificar existencias de un producto \n7. Vender un producto \n8. Comprar productos \n\nElije una opción, escribe: 1,2,3,4,5,6 o "
     );
     switch (decision) {
       case "1":
@@ -242,12 +317,21 @@ function menu() {
         searchProducts();
         break;
       case "4":
-        deleteProduct();
+        updateDescription();
         break;
       case "5":
-        existenceProduct();
+        deleteProduct();
         break;
       case "6":
+        existenceProduct();
+        break;
+      case "7":
+        sellProduct();
+        break;
+      case "8":
+        buyProduct();
+        break;
+      case "9":
         alert("¡Hasta pronto!");
         flag = false;
         break;
