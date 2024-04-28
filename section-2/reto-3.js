@@ -1,8 +1,5 @@
 //Section 2 Reto 3
-let products = [],
-  id = 0,
-  flag = true,
-  product, blacklistedProducts =[], descriptionProduct, adminBadWords = ['palabra1', 'palabra2', 'palabra3', 'palabra4', 'palabra5'];
+let products = [], id = 0, flag = true, product, blacklistedProducts =[], descriptionProduct, descriptionProducts, adminBadWords = ['palabra1', 'palabra2', 'palabra3', 'palabra4', 'palabra5'], productsFormatted = [];
 function validateAlphabetNumeric(validator) {
   const validateAlphabetNumeric =
     /^[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ][a-zA-ZñÑáéíóúüÁÉÍÓÚÜ\s0-9]*$/;
@@ -30,6 +27,29 @@ function showPrice(value){
   value>999999999? valueFormatted=`${valueFormatted.slice(0,-11)}.${valueFormatted.slice(-11)}` : valueFormatted;
   value>999999999999? valueFormatted=`${valueFormatted.slice(0,-15)}'${valueFormatted.slice(-15)}` : valueFormatted;
   return valueFormatted;
+}
+function showProductsConsole(arr) {
+  productsFormatted=[];
+  productsFormatted.push(
+    arr.map(
+      (e) =>
+        `\n-- id: ${e.id},   nombre: ${e.name},   precio: $${e.price},   cantidad: ${e.amount},   descripciòn: ${hiddenBadWords(e.description)}`
+    )
+  );
+  console.log(`Los productos disponibles son: \n${productsFormatted}`);
+}
+function showProductsAlert(arr) {
+  productsFormatted=[];
+  productsFormatted.push(
+    arr.map(
+      (e) =>
+        `\n-- id: ${e.id},   nombre: ${e.name},   precio: $${e.price},   cantidad: ${e.amount},   descripciòn: ${hiddenBadWords(e.description)}`
+    )
+  );
+  alert(`Los productos disponibles son: \n${productsFormatted}`);
+}
+function hiddenBadWords(userSrting){
+  return userSrting.replace(new RegExp(`\\b(?:${adminBadWords.join('|')})\\b`, 'gi'),'*');
 }
 function createProducts() {
   let name, price, amount, description, product;
@@ -71,7 +91,6 @@ function createProducts() {
   products.push(product);
   alert("Producto agregado con éxito");
   menu();
-  return product;
 }
 function duplicateProducts() {
   let product, duplicate, originalProduct, counter;
@@ -100,24 +119,6 @@ function duplicateProducts() {
   }
   menu();
 }
-function showProductsConsole(arr) {
-  console.log(`Los productos disponibles son:`);
-  arr.forEach((e) =>
-    console.log(
-      `-- id: ${e.id}, nombre: ${e.name}, precio: $${e.price}, cantidad: ${e.amount}, descripciòn: ${e.description}`
-    )
-  );
-}
-function showProductsAlert(arr) {
-  let productsFormatted = [];
-  productsFormatted.push(
-    arr.map(
-      (e) =>
-        `\n-- id: ${e.id},   nombre: ${e.name},   precio: $${e.price},   cantidad: ${e.amount},   descripciòn: ${e.description}`
-    )
-  );
-  alert(`Los productos disponibles son: \n${productsFormatted}`);
-}
 function searchProducts() {
   products.length != 0
     ? showProductsConsole(products)
@@ -137,7 +138,7 @@ function searchProducts() {
           if (products.some((e) => e.name == product)) {
             let originalProduct = products.find((e) => e.name == product);
             alert(
-              `El producto que buscas coincide con: \n$-- id: ${originalProduct.id}, nombre: ${originalProduct.name}, precio: $${originalProduct.price}, cantidad: ${originalProduct.amount}, descripciòn: ${originalProduct.description}`
+              `El producto que buscas coincide con: \n$-- id: ${originalProduct.id}, nombre: ${originalProduct.name}, precio: $${originalProduct.price}, cantidad: ${originalProduct.amount}, descripciòn: ${hiddenBadWords(originalProduct.description)}`
             );
           } else {
             alert(`El producto que buscas no fue encontrado`);
@@ -191,7 +192,7 @@ function updateDescription(){
       product = products.find(e=> e.id == product);
       let newDescription='';
       do {
-        newDescription = prompt(`Ingresa una nueva descripciòn para el producto: ${product.name}, con id: ${product.id} y descripciòn: ${product.description}`);
+        newDescription = prompt(`Ingresa una nueva descripciòn para el producto: ${product.name}, con id: ${product.id} y descripciòn: ${hiddenBadWords(product.description)}`);
       } while (!validateAlphabetNumeric(newDescription));
       console.log(newDescription)
       product.description = `${newDescription}`;
@@ -365,7 +366,7 @@ function sortProducts(){
 function badWords(){
 if (products.length!=0) {
   if (products.some(e=>{
-    descriptionProduct = e.description.trim().toLowerCase().split(' ');
+    userSrting = e.description.trim().toLowerCase().split(' ');
     return descriptionProduct.some(word=>adminBadWords.includes(word));
   })) {
     blacklistedProducts = products.filter(e=>{
@@ -400,11 +401,10 @@ function generalReport(){
     });
     products.forEach(e=>totalAmount+=e.amount);
     products.forEach(e=>totalInventories+=(e.price*e.amount));
-    alert(`-----Reporte General de Productos-----\n\n-La cantidad de productos en el inventario es: ${totalAmount} unidad(es)\n-El valor total del inventario es: $${showPrice(totalInventories)}\n-La cantidad de productos por encima de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price > limitPrice).length} producto(s)\n-La cantidad de productos por debajo de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price <= limitPrice).length} producto(s)\n-La cantidad de productos con existencias mayores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount > limitAmount).length} producto(s)\n-La cantidad de productos con existencias menores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount <= limitAmount).length} producto(s)\nLa cantidad de productos con posibles malas palabras en su descripción es: ${blacklistedProducts.length} producto(s)`);
-    console.log(`-----Reporte General de Productos-----\n\n-La cantidad de productos en el inventario es: ${totalAmount} unidad(es)\n-El valor total del inventario es: $${showPrice(totalInventories)}\n-La cantidad de productos por encima de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price > limitPrice).length} producto(s)\n-La cantidad de productos por debajo de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price <= limitPrice).length} producto(s)\n-La cantidad de productos con existencias mayores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount > limitAmount).length} producto(s)\n-La cantidad de productos con existencias menores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount <= limitAmount).length} producto(s)\nLa cantidad de productos con posibles malas palabras en su descripción son: ${blacklistedProducts.length} producto(s)`);
+    alert(`-----Reporte General de Productos-----\n\n-La cantidad de productos en el inventario es: ${totalAmount} unidad(es) de ${products.length} tipo(s) de producto(s)\n-El valor total del inventario es: $${showPrice(totalInventories)}\n-La cantidad de productos por encima de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price > limitPrice).length} producto(s)\n-La cantidad de productos por debajo de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price <= limitPrice).length} producto(s)\n-La cantidad de productos con existencias mayores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount > limitAmount).length} producto(s)\n-La cantidad de productos con existencias menores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount <= limitAmount).length} producto(s)\nLa cantidad de productos con posibles malas palabras en su descripción son: ${blacklistedProducts.length} producto(s)`);
     
-    console.log(`-----Reporte General de Productos-----\n\n-La cantidad de productos en el inventario es: ${totalAmount} unidad(es)\n-El valor total del inventario es: $${showPrice(totalInventories)}\n-La cantidad de productos por encima de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price > limitPrice).length} producto(s)\n-La cantidad de productos por debajo de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price <= limitPrice).length} producto(s)\n-La cantidad de productos con existencias mayores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount > limitAmount).length} producto(s)\n-La cantidad de productos con existencias menores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount <= limitAmount).length} producto(s)\nLa cantidad de productos con posibles malas palabras en su descripción es: ${blacklistedProducts.length} producto(s)`);
-    console.log(`-----Reporte General de Productos-----\n\n-La cantidad de productos en el inventario es: ${totalAmount} unidad(es)\n-El valor total del inventario es: $${showPrice(totalInventories)}\n-La cantidad de productos por encima de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price > limitPrice).length} producto(s)\n-La cantidad de productos por debajo de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price <= limitPrice).length} producto(s)\n-La cantidad de productos con existencias mayores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount > limitAmount).length} producto(s)\n-La cantidad de productos con existencias menores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount <= limitAmount).length} producto(s)\nLa cantidad de productos con posibles malas palabras en su descripción son: ${blacklistedProducts.length} producto(s)`);
+    console.log(`-----Reporte General de Productos-----\n\n-La cantidad de productos en el inventario es: ${totalAmount} unidad(es) de ${products.length} tipo(s) de producto(s)\n-El valor total del inventario es: $${showPrice(totalInventories)}\n-La cantidad de productos por encima de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price > limitPrice).length} producto(s)\n-La cantidad de productos por debajo de $${showPrice(limitPrice)} son: ${products.filter(e=>e.price <= limitPrice).length} producto(s)\n-La cantidad de productos con existencias mayores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount > limitAmount).length} producto(s)\n-La cantidad de productos con existencias menores a ${limitAmount} unidad(es) son: ${products.filter(e=>e.amount <= limitAmount).length} producto(s)\nLa cantidad de productos con posibles malas palabras en su descripción son: ${blacklistedProducts.length} producto(s)`);
+    
   }else{
   alert(`No existen productos agregados en nuestra base de datos`)
   }
